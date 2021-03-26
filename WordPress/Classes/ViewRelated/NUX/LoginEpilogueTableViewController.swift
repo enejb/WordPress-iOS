@@ -246,9 +246,7 @@ private extension LoginEpilogueTableViewController {
     ///
     var numberOfWordPressComBlogs: Int {
         let context = ContextManager.sharedInstance().mainContext
-        let service = AccountService(managedObjectContext: context)
-
-        return service.defaultWordPressComAccount()?.blogs.count ?? 0
+        return (try? WPAccount.lookupDefaultWordPressComAccount(in: context)?.blogs.count) ?? 0
     }
 
     func rowCount(forSection section: Int) -> Int {
@@ -303,8 +301,8 @@ private extension LoginEpilogueTableViewController {
     ///
     func loadEpilogueForDotcom() -> LoginEpilogueUserInfo {
         let context = ContextManager.sharedInstance().mainContext
-        let service = AccountService(managedObjectContext: context)
-        guard let account = service.defaultWordPressComAccount() else {
+
+        guard let account = try? WPAccount.lookupDefaultWordPressComAccount(in: context) else {
             fatalError()
         }
 
