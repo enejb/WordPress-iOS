@@ -109,8 +109,7 @@ extension WordPressAuthenticationManager {
     @objc
     class func signinForWPComFixingAuthToken(_ onDismissed: ((_ cancelled: Bool) -> Void)? = nil) -> UIViewController {
         let context = ContextManager.sharedInstance().mainContext
-        let service = AccountService(managedObjectContext: context)
-        let account = service.defaultWordPressComAccount()
+        let account = try? WPAccount.lookupDefaultWordPressComAccount(in: context)
 
         return WordPressAuthenticator.signinForWPCom(dotcomEmailAddress: account?.email, dotcomUsername: account?.username, onDismissed: onDismissed)
     }
@@ -197,8 +196,7 @@ extension WordPressAuthenticationManager: WordPressAuthenticatorDelegate {
 
     /// We allow to connect with WordPress.com account only if there is no default account connected already.
     var allowWPComLogin: Bool {
-        let accountService = AccountService(managedObjectContext: ContextManager.shared.mainContext)
-        return accountService.defaultWordPressComAccount() == nil
+        (try? WPAccount.lookupDefaultWordPressComAccount(in: ContextManager.shared.mainContext)) == nil
     }
 
     /// Returns an instance of a SupportView, configured to be displayed from a specified Support Source.
@@ -301,8 +299,7 @@ extension WordPressAuthenticationManager: WordPressAuthenticatorDelegate {
         }
 
         let context = ContextManager.sharedInstance().mainContext
-        let service = AccountService(managedObjectContext: context)
-        let numberOfBlogs = service.defaultWordPressComAccount()?.blogs?.count ?? 0
+        let numberOfBlogs = (try? WPAccount.lookupDefaultWordPressComAccount(in: context))?.blogs?.count ?? 0
 
         return numberOfBlogs > 0
     }
@@ -322,7 +319,7 @@ extension WordPressAuthenticationManager: WordPressAuthenticatorDelegate {
         let service = AccountService(managedObjectContext: context)
 
         let account = service.createOrUpdateAccount(withUsername: username, authToken: authToken)
-        if service.defaultWordPressComAccount() == nil {
+        if (try? WPAccount.lookupHasDefaultWordPressComAccount(in: context)) ?? false {
             service.setDefaultWordPressComAccount(account)
         }
     }
