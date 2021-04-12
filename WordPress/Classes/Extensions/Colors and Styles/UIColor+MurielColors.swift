@@ -227,8 +227,8 @@ extension UIColor {
     }
 
 // MARK: - WP Fancy Buttons
-    static var primaryButtonBackground = accent
-    static var primaryButtonDownBackground = muriel(color: .accent, .shade80)
+    static var primaryButtonBackground = primary
+    static var primaryButtonDownBackground = muriel(color: .primary, .shade80)
 
     static var secondaryButtonBackground: UIColor {
         return UIColor(light: .white, dark: .systemGray5)
@@ -265,8 +265,10 @@ extension UIColor {
     }
 }
 
+@objc
 extension UIColor {
     // A way to create dynamic colors that's compatible with iOS 11 & 12
+    @objc
     convenience init(light: UIColor, dark: UIColor) {
         self.init { traitCollection in
             if traitCollection.userInterfaceStyle == .dark {
