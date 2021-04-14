@@ -297,7 +297,7 @@ jobs:
       - store_artifacts:
           path: Artifacts
           destination: Artifacts
-  jetpack-pr-build:
+  Build Jetpack:
     executor:
       name: ios/default
       <<: *xcode_version
@@ -357,7 +357,8 @@ workflows:
               only:
                 - develop
                 - /^release.*/
-      - jetpack-pr-build
+      - Build Jetpack:
+          name: Build Jetpack (without testing)
       #Optionally run UI tests on PRs
       - Optional Tests:
           type: approval
